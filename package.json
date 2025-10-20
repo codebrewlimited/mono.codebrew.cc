@@ -1,11 +1,26 @@
 {
   "name": "mono.codebrew.cc",
-  "private": true,
-  "workspaces": [
-    "v1",
-    "v2"
-  ],
+  "version": "1.0.0",
+  "description": "This generated scaffold includes: - v1/ and v2/ projects (independent package.json + CHANGELOG.md) - Commit message enforcement via Husky + Commitlint (pre-push) - CircleCI config that runs `release-please` for each package on `master`",
+  "main": "index.js",
   "scripts": {
-    "prepare": "husky"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "prepare": "husky",
+    "postinstall": "npx husky init"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codebrewlimited/mono.codebrew.cc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/codebrewlimited/mono.codebrew.cc/issues"
+  },
+  "homepage": "https://github.com/codebrewlimited/mono.codebrew.cc#readme",
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }

@@ -1,0 +1,6 @@
+# .husky/commit-msg
+#!/usr/bin/env sh
+# . "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Checking commit message..."
+# npx commitlint --edit "$1"

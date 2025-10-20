@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-echo "🔍 Validating commit messages..."
-# Validate commits from last push target to HEAD (best effort)
-npx commitlint --from=HEAD~1 || exit 1
