@@ -1,0 +1,8 @@
+{
+  "name": "mono.codebrew.cc",
+  "private": true,
+  "workspaces": [
+    "v1",
+    "v2"
+  ]
+}
