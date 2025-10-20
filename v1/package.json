@@ -1,0 +1,7 @@
+{
+  "name": "v1",
+  "scripts": {
+    "test": "echo '🧩 Running v1 pre-commit logic...'",
+    "lint": "eslint ."
+  }
+}

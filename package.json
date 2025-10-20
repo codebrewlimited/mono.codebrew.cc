@@ -3,10 +3,16 @@
   "version": "1.0.0",
   "description": "This generated scaffold includes: - v1/ and v2/ projects (independent package.json + CHANGELOG.md) - Commit message enforcement via Husky + Commitlint (pre-push) - CircleCI config that runs `release-please` for each package on `master`",
   "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "v1",
+    "v2"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0",
     "prepare": "husky",
-    "postinstall": "npx husky init"
+    "postinstall": "npx husky init",
+    "lint": "npm run lint --workspaces",
+    "test": "npm test --workspaces"
   },
   "repository": {
     "type": "git",
@@ -21,6 +27,6 @@
   },
   "homepage": "https://github.com/codebrewlimited/mono.codebrew.cc#readme",
   "devDependencies": {
-    "husky": "^9.1.7"
+    "husky": "9.1.7"
   }
 }
