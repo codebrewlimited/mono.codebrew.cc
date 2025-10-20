@@ -5,7 +5,7 @@
   "scripts": {
     "release": "npx release-please release --path . || true",
     "release:pr": "npx release-please release-pr --path . --token ${RELEASE_PLEASE_TOKEN} || true",
-    "prepare": "husky"
+    "prepare": "cd .. && husky init v1/.husky"
   },
   "devDependencies": {
     "husky": "^9.1.7",

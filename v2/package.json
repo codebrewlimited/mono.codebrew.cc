@@ -2,10 +2,14 @@
   "name": "v2",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "v1",
+    "v2"
+  ],
   "scripts": {
     "release": "npx release-please release --path . || true",
     "release:pr": "npx release-please release-pr --path . --token ${RELEASE_PLEASE_TOKEN} || true",
-    "prepare": "husky install"
+    "prepare": "cd .. && husky init v2/.husky"
   },
   "devDependencies": {
     "@commitlint/cli": "17.0.0",
