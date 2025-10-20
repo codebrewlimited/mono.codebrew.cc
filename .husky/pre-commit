@@ -1,3 +1,7 @@
 #!/usr/bin/env sh
 
 echo "✅ Root pre-commit hook triggered"
+
+# Run package-specific hooks if they exist
+[ -f "./v1/.scripts/pre-commit.sh" ] && sh ./v1/.scripts/pre-commit.sh
+[ -f "./v2/.scripts/pre-commit.sh" ] && sh ./v2/.scripts/pre-commit.sh
