@@ -27,6 +27,8 @@
   },
   "homepage": "https://github.com/codebrewlimited/mono.codebrew.cc#readme",
   "devDependencies": {
+    "@commitlint/cli": "17.0.0",
+    "@commitlint/config-conventional": "17.0.0",
     "husky": "9.1.7"
   }
 }
