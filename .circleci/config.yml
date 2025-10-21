@@ -19,7 +19,7 @@ jobs:
           command: |
             if git diff --name-only HEAD~1 | grep -q "^v1/"; then
               cd v1
-              npm run build --workspace v1
+              npm run build
               npx standard-version --no-verify --message "chore(release): %s [skip ci]"
               # scp -r v1 ec2-user@<EC2-IP>:/home/ec2-user/app
               # ssh ec2-user@<EC2-IP> "cd /home/ec2-user/app && npm install --production && pm2 restart all"
