@@ -3,5 +3,6 @@
   "scripts": {
     "test": "echo '🧩 Running v1 pre-commit logic...'",
     "lint": "eslint ."
-  }
+  },
+  "version": "0.0.3"
 }
