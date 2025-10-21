@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.4](https://github.com/codebrewlimited/mono.codebrew.cc/compare/v1.1.3...v1.1.4) (2025-10-21)
+
+
+### Bug Fixes
+
+* migrated to pre-push ([7c461a3](https://github.com/codebrewlimited/mono.codebrew.cc/commit/7c461a3acc127bdfcd948ef54d2c49588f9c73be))
+
 ### [1.1.3](https://github.com/codebrewlimited/mono.codebrew.cc/compare/v1.1.2...v1.1.3) (2025-10-21)
 
 ### [1.1.2](https://github.com/codebrewlimited/mono.codebrew.cc/compare/v2.0.1...v1.1.2) (2025-10-21)
