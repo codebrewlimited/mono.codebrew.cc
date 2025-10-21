@@ -9,11 +9,11 @@ CHANGED=$(git diff --cached --name-only)
 # If v1 has changes, bump version
 if echo "$CHANGED" | grep -E "^v1/src/|^v1/package.json"; then
   echo "📦 Bumping version for v1..."
-  npm version patch --workspace=v1 --no-git-tag-version
+  npx standard-version --workspace v1 --no-verify
 fi
 
 # If v2 has changes, bump version
 if echo "$CHANGED" | grep -E "^v2/src/|^v2/package.json"; then
   echo "📦 Bumping version for v2..."
-  npm version patch --workspace=v2 --no-git-tag-version
+  npx standard-version --workspace v2 --no-verify
 fi
