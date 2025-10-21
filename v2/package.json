@@ -1,6 +1,6 @@
 {
   "name": "v2",
-  "version": "2.0.1",
+  "version": "2.0.0",
   "scripts": {
     "test": "exit 0"
   },

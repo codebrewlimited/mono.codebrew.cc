@@ -23,7 +23,6 @@ jobs:
               cd ..
             fi
       - run: git push --follow-tags
-      - run: npm publish
 workflows:
   version: 2
   release-workflow:
