@@ -27,7 +27,11 @@ jobs:
               npx standard-version
               cd ..
             fi
-      - run: git push --follow-tags
+      - run:
+          name: Push release
+          command: git push --follow-tags --no-verify
+          environment:
+            HUSKY: 0
 workflows:
   version: 2
   release-workflow:
