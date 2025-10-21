@@ -1,0 +1,31 @@
+version: 2.1
+jobs:
+  release:
+    docker:
+      - image: cimg/node:22.18
+    steps:
+      - checkout
+      - run: npm ci
+      - run:
+          name: Release v1 if changed
+          command: |
+            if git diff --name-only HEAD~1 | grep -q "^v1/"; then
+              cd v1
+              npx standard-version
+              cd ..
+            fi
+      - run:
+          name: Release v2 if changed
+          command: |
+            if git diff --name-only HEAD~1 | grep -q "^v2/"; then
+              cd v2
+              npx standard-version
+              cd ..
+            fi
+      - run: git push --follow-tags
+      - run: npm publish
+workflows:
+  version: 2
+  release-workflow:
+    jobs:
+      - release
