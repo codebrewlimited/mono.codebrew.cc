@@ -16,7 +16,7 @@ jobs:
           command: |
             if git diff --name-only HEAD~1 | grep -q "^v1/"; then
               cd v1
-              npx standard-version --no-verify --message "chore(release): %s [skip ci]"
+              npx standard-version --release-as patch --no-verify --message "chore(release): %s [skip ci]"
               cd ..
             fi
       - run:
