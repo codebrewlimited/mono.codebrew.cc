@@ -16,7 +16,7 @@ jobs:
           command: |
             if git diff --name-only HEAD~1 | grep -q "^v1/"; then
               cd v1
-              npx standard-version
+              npx standard-version --release-as patch
               cd ..
             fi
       - run:
