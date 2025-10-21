@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "prepare": "husky",
-    "postinstall": "npx husky init",
+    "_postinstall": "npx husky init",
     "lint": "npm run lint --workspaces",
     "test": "npm test --workspaces"
   },
