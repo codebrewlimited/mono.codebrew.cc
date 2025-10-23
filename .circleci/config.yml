@@ -95,6 +95,11 @@ jobs:
           command: |
             npx standard-version --no-verify --message "chore(release): %s [skip ci]"
       - run:
+          name: Push release
+          command: git push --follow-tags --no-verify
+          environment:
+            HUSKY: 0
+      - run:
           name: Build v1
           command: npm run build --workspace v1
       - run:
@@ -135,8 +140,8 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.14
+      # - setup_remote_docker:
+      #     version: 20.10.14
       - run:
           name: Build Docker image
           command: |
