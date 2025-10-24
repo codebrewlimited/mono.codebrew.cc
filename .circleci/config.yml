@@ -1,5 +1,3 @@
-version: 2.1
-
 orbs:
   node: circleci/node@5.0
 
@@ -32,37 +30,28 @@ jobs:
             fi
 
   release-and-build:
-    docker:
-      - image: cimg/node:22.16
-    working_directory: ~/repo
+    executor: node-executor
     steps:
       - checkout
       - setup_remote_docker:
-          version: 24.0.5
           docker_layer_caching: true
-      - run:
-          name: Install dependencies
-          command: npm ci
+      - run: npm ci
       - run:
           name: Conditional release
           command: |
             if [ "$V1_CHANGED" = "true" ]; then
-              echo "Releasing v1..."
               npm run release:v1
             fi
             if [ "$V2_CHANGED" = "true" ]; then
-              echo "Releasing v2..."
               npm run release:v2
             fi
       - run:
           name: Build Docker images
           command: |
             if [ "$V1_CHANGED" = "true" ]; then
-              echo "Building Docker image for v1..."
               docker build -f Dockerfile -t myregistry/my-app:v1-$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
             fi
             if [ "$V2_CHANGED" = "true" ]; then
-              echo "Building Docker image for v2..."
               docker build -f Dockerfile -t myregistry/my-app:v2-$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
             fi
       - run:
