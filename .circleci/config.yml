@@ -146,7 +146,7 @@ jobs:
           name: Build Docker image
           command: |
             VERSION=$(node -p "require('./v1/package.json').version")
-            docker build -t codebrew/v1:$VERSION -f v1/Dockerfile .
+            docker build -t codebrew/v1:$VERSION -f Dockerfile .
       - run:
           name: Push Docker image
           command: |
