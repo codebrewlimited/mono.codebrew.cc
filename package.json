@@ -9,7 +9,7 @@
     "v2"
   ],
   "scripts": {
-    "prepare": "husky",
+    "_prepare": "husky",
     "_postinstall": "npx husky init",
     "lint": "npm run lint --workspaces",
     "test": "npm test --workspaces"
