@@ -4,6 +4,7 @@ WORKDIR /app
 
 # Copy root package files first (for caching)
 COPY package*.json ./
+COPY package-lock.json ./
 COPY tsconfig*.json ./
 
 # Copy workspace package files so npm can resolve dependencies
