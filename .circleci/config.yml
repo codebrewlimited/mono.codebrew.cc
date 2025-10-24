@@ -91,7 +91,16 @@ jobs:
             git config --global user.name "CI Bot"
             git config --global user.email "ci-bot@circleci.com"
             git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
-
+      # - run:
+      #     name: Build v1
+      #     command: npm run build --workspace v1
+      - run:
+          name: Run tests for v1
+          command: npm run test --workspace v1
+      - persist_to_workspace:
+          root: .
+          paths:
+            - v1
       - run:
           name: Versioning
           command: |
@@ -101,16 +110,6 @@ jobs:
           command: git push --follow-tags --no-verify
           environment:
             HUSKY: 0
-      - run:
-          name: Build v1
-          command: npm run build --workspace v1
-      - run:
-          name: Run tests for v1
-          command: npm run test --workspace v1
-      - persist_to_workspace:
-          root: .
-          paths:
-            - v1
 
   deploy_v1:
     docker:
@@ -139,7 +138,7 @@ jobs:
 
   build_and_push_docker:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/node:20.9
     steps:
       - checkout
       - setup_remote_docker
