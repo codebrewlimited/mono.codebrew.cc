@@ -140,7 +140,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - setup_remote_docker:
+      - setup_remote_docker # ✅ fixed
       - run:
           name: Build Docker image
           command: |
