@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "test": "echo Just a reminder that your mock test is coming up! 📚💡",
     "start": "node dist/main.js"
   },
   "dependencies": {
