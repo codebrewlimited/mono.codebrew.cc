@@ -1,6 +1,6 @@
 {
   "name": "mono.codebrew.cc",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "This generated scaffold includes: - v1/ and v2/ projects (independent package.json + CHANGELOG.md) - Commit message enforcement via Husky + Commitlint (pre-push) - CircleCI config that runs `release-please` for each package on `master`",
   "main": "index.js",
   "private": true,
