@@ -10,7 +10,7 @@ COPY tsconfig*.json ./
 COPY v1/package*.json ./v1/
 
 # Install dependencies for v1 only
-RUN npm install --workspace v1 --omit=dev
+RUN npm install --workspace v1
 
 # Copy all source files
 COPY . .
