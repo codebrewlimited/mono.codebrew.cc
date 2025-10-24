@@ -89,7 +89,9 @@ jobs:
           name: Configure Git
           command: |
             git config --global user.name "CI Bot"
-            git config --global user.email "ci-bot@example.com"
+            git config --global user.email "ci-bot@circleci.com"
+            git config --global url."https://${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
+
       - run:
           name: Versioning
           command: |
@@ -140,7 +142,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - setup_remote_docker # ✅ fixed
+      - setup_remote_docker
       - run:
           name: Build Docker image
           command: |
