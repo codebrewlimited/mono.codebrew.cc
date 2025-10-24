@@ -15,27 +15,35 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Detect changed workspaces
+          name: Fetch main and full history
           command: |
-            echo "🔍 Detecting changes compared to main..."
+            git fetch origin main --depth=1 || true
+            git fetch --unshallow || true
 
-            # Determine the correct base branch
-            BASE_BRANCH="origin/main"
+      - run:
+          name: Detect changes since base
+          command: |
+            echo "🔍 Detecting changes..."
 
-            # If main isn't available, fallback to previous commit
-            if ! git show-ref --verify --quiet refs/remotes/origin/main; then
-              echo "⚠️ origin/main not found, using previous commit as diff base"
+            # Determine base commit for diff
+            if [ -n "$CIRCLE_PULL_REQUEST" ]; then
+              # Pull request context
+              BASE_BRANCH="origin/main"
+              echo "PR detected. Comparing against $BASE_BRANCH"
+            elif [ "$CIRCLE_BRANCH" = "main" ]; then
+              # Running on main — compare last commit only
               BASE_BRANCH="HEAD~1"
+              echo "Main branch build. Comparing last commit only"
+            else
+              # Feature branch build
+              BASE_BRANCH="origin/main"
+              echo "Feature branch detected. Comparing against $BASE_BRANCH"
             fi
 
-            echo "Base branch: $BASE_BRANCH"
-
             CHANGED_FILES=$(git diff --name-only $BASE_BRANCH...HEAD || echo "")
-
             echo "Changed files:"
             echo "$CHANGED_FILES"
 
-            # Detect v1 changes
             if echo "$CHANGED_FILES" | grep -qE "^v1/"; then
               echo "✅ Detected changes in v1"
               echo "V1_CHANGED=true" >> $BASH_ENV
@@ -44,7 +52,6 @@ jobs:
               echo "V1_CHANGED=false" >> $BASH_ENV
             fi
 
-            # Detect v2 changes
             if echo "$CHANGED_FILES" | grep -qE "^v2/"; then
               echo "✅ Detected changes in v2"
               echo "V2_CHANGED=true" >> $BASH_ENV
@@ -52,6 +59,13 @@ jobs:
               echo "ℹ️ No changes in v2"
               echo "V2_CHANGED=false" >> $BASH_ENV
             fi
+
+      - run:
+          name: Print results
+          command: |
+            source $BASH_ENV
+            echo "V1_CHANGED=$V1_CHANGED"
+            echo "V2_CHANGED=$V2_CHANGED"
 
   release-and-build:
     executor: node-executor
