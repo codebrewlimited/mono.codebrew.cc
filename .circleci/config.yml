@@ -17,10 +17,20 @@ jobs:
       - run:
           name: Detect changed workspaces
           command: |
-            echo "🔍 Detecting changes since origin/main..."
+            echo "🔍 Detecting changes compared to main..."
 
-            # List changed files
-            CHANGED_FILES=$(git diff --name-only origin/main...HEAD || echo "")
+            # Determine the correct base branch
+            BASE_BRANCH="origin/main"
+
+            # If main isn't available, fallback to previous commit
+            if ! git show-ref --verify --quiet refs/remotes/origin/main; then
+              echo "⚠️ origin/main not found, using previous commit as diff base"
+              BASE_BRANCH="HEAD~1"
+            fi
+
+            echo "Base branch: $BASE_BRANCH"
+
+            CHANGED_FILES=$(git diff --name-only $BASE_BRANCH...HEAD || echo "")
 
             echo "Changed files:"
             echo "$CHANGED_FILES"
