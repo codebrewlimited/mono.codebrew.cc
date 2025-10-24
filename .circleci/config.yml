@@ -1,0 +1,89 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0
+  docker: circleci/docker@3.1
+
+executors:
+  node-executor:
+    docker:
+      - image: cimg/node:22.16
+    working_directory: ~/repo
+
+jobs:
+  detect-changes:
+    executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Detect changed workspaces
+          command: |
+            # Detect changes in v1
+            if git diff --quiet origin/main...HEAD -- v1/; then
+              echo "V1_CHANGED=false" >> $BASH_ENV
+            else
+              echo "V1_CHANGED=true" >> $BASH_ENV
+            fi
+
+            # Detect changes in v2
+            if git diff --quiet origin/main...HEAD -- v2/; then
+              echo "V2_CHANGED=false" >> $BASH_ENV
+            else
+              echo "V2_CHANGED=true" >> $BASH_ENV
+            fi
+
+  release-and-build:
+    docker:
+      - image: cimg/node:22.16
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 24.0.5
+          docker_layer_caching: true
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Conditional release
+          command: |
+            if [ "$V1_CHANGED" = "true" ]; then
+              echo "Releasing v1..."
+              npm run release:v1
+            fi
+            if [ "$V2_CHANGED" = "true" ]; then
+              echo "Releasing v2..."
+              npm run release:v2
+            fi
+      - run:
+          name: Build Docker images
+          command: |
+            if [ "$V1_CHANGED" = "true" ]; then
+              echo "Building Docker image for v1..."
+              docker build -f Dockerfile -t myregistry/my-app:v1-$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
+            fi
+            if [ "$V2_CHANGED" = "true" ]; then
+              echo "Building Docker image for v2..."
+              docker build -f Dockerfile -t myregistry/my-app:v2-$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
+            fi
+      - run:
+          name: Push Docker images
+          command: |
+            if [ "$V1_CHANGED" = "true" ]; then
+              docker push myregistry/my-app:v1-$CIRCLE_SHA1
+            fi
+            if [ "$V2_CHANGED" = "true" ]; then
+              docker push myregistry/my-app:v2-$CIRCLE_SHA1
+            fi
+
+workflows:
+  version: 2
+  build-and-release:
+    jobs:
+      - detect-changes
+      - release-and-build:
+          requires:
+            - detect-changes
+          filters:
+            branches:
+              only: main

@@ -1,0 +1,27 @@
+{
+    "name": "monorepo-root",
+    "private": true,
+    "workspaces": [
+        "v1",
+        "v2"
+    ],
+    "scripts": {
+        "version:v1": "standard-version --package=v1/package.json",
+        "version:v2": "standard-version --package=v2/package.json",
+        "preversion": "echo 'Preversion hook running...'",
+        "postversion": "git push --follow-tags"
+    },
+    "devDependencies": {
+        "@commitlint/config-conventional": "^17.0.0",
+        "commitlint": "^17.0.0",
+        "husky": "^8.0.0",
+        "lint-staged": "^14.0.0",
+        "standard-version": "^9.5.0"
+    },
+    "lint-staged": {
+        "*.ts": [
+            "eslint --fix",
+            "git add"
+        ]
+    }
+}
