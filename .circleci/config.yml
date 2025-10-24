@@ -17,18 +17,30 @@ jobs:
       - run:
           name: Detect changed workspaces
           command: |
-            # Detect changes in v1
-            if git diff --quiet origin/main...HEAD -- v1/; then
-              echo "V1_CHANGED=false" >> $BASH_ENV
-            else
+            echo "🔍 Detecting changes since origin/main..."
+
+            # List changed files
+            CHANGED_FILES=$(git diff --name-only origin/main...HEAD || echo "")
+
+            echo "Changed files:"
+            echo "$CHANGED_FILES"
+
+            # Detect v1 changes
+            if echo "$CHANGED_FILES" | grep -qE "^v1/"; then
+              echo "✅ Detected changes in v1"
               echo "V1_CHANGED=true" >> $BASH_ENV
+            else
+              echo "ℹ️ No changes in v1"
+              echo "V1_CHANGED=false" >> $BASH_ENV
             fi
 
-            # Detect changes in v2
-            if git diff --quiet origin/main...HEAD -- v2/; then
-              echo "V2_CHANGED=false" >> $BASH_ENV
-            else
+            # Detect v2 changes
+            if echo "$CHANGED_FILES" | grep -qE "^v2/"; then
+              echo "✅ Detected changes in v2"
               echo "V2_CHANGED=true" >> $BASH_ENV
+            else
+              echo "ℹ️ No changes in v2"
+              echo "V2_CHANGED=false" >> $BASH_ENV
             fi
 
   release-and-build:
