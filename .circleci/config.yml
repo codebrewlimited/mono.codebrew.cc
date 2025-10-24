@@ -29,6 +29,7 @@ jobs:
               echo "V2_CHANGED=false" >> $BASH_ENV
             else
               echo "V2_CHANGED=true" >> $BASH_ENV
+            fi
 
   release-and-build:
     executor: node-executor
