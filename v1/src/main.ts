@@ -1,7 +1,7 @@
 import express from 'express';
 
 const app = express();
-const PORT = process.env.PORT || 8745;
+const PORT = process.env.PORT || 8746;
 
 app.get('/', (req, res) => {
   res.send('Hello World from v1!');
