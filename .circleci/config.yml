@@ -123,12 +123,16 @@ jobs:
       - run:
           name: Push Docker images
           command: |
-            source workspace-vars
+            echo $REGISTRY_PASS | docker login $REGISTRY_URL -u $REGISTRY_USER --password-stdin
+
             if [ "$V1_CHANGED" = "true" ]; then
-              docker push myregistry/my-app:v1-$CIRCLE_SHA1
+              docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
+              docker push $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1
             fi
+
             if [ "$V2_CHANGED" = "true" ]; then
-              docker push myregistry/my-app:v2-$CIRCLE_SHA1
+              docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
+              docker push $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1
             fi
 
 workflows:
