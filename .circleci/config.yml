@@ -81,6 +81,7 @@ jobs:
             ls -la v1 || true
             ls -la v2 || true
             cat package.json | head -n 20
+            echo "$V1_CHANGED"
       - run:
           name: Install dependencies
           command: npm ci
@@ -88,7 +89,7 @@ jobs:
       - run:
           name: Conditional release
           command: |
-            echo "$V1_CHANGED"
+            source $BASH_ENV
             if [ "$V1_CHANGED" = "true" ]; then
               npm run release:v1
             fi
