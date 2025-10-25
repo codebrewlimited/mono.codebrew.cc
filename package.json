@@ -6,7 +6,7 @@
         "v2"
     ],
     "scripts": {
-        "version:v1": "cd v1 && npx standard-version && cd ..",
+        "version:v1": "cd v1 && npx standard-version --no-verify --message \"chore(release): %s [skip ci]\" && cd ..",
         "version:v2": "cd v2 && npx standard-version && cd ..",
         "preversion": "echo 'Preversion hook running...'",
         "postversion": "git push --follow-tags"
