@@ -14,6 +14,7 @@ COPY $WORKSPACE/package*.json ./$WORKSPACE/
 
 # Install dependencies for the workspace
 RUN npm install --workspace $WORKSPACE --omit=dev
+RUN npm install --workspace $WORKSPACE
 
 # Copy workspace source
 COPY $WORKSPACE ./$WORKSPACE/
@@ -33,7 +34,7 @@ COPY --from=builder /app/$WORKSPACE/dist ./dist
 COPY --from=builder /app/$WORKSPACE/package*.json ./
 
 # Install production dependencies
-RUN npm ci --omit=dev
+# RUN npm ci --omit=dev
 
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
