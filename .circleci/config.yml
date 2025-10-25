@@ -74,6 +74,14 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
+          name: Debug working directory
+          command: |
+            pwd
+            ls -la
+            ls -la v1 || true
+            ls -la v2 || true
+            cat package.json | head -n 20
+      - run:
           name: Install dependencies
           command: npm ci
           working_directory: ~/repo
