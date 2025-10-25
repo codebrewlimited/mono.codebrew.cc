@@ -1,5 +1,5 @@
 {
-    "name": "monorepo-root",
+    "name": "mono.codebrew.cc",
     "private": true,
     "workspaces": [
         "v1",
@@ -12,10 +12,10 @@
         "postversion": "git push --follow-tags"
     },
     "devDependencies": {
-        "@commitlint/cli": "^20.1.0",
-        "@commitlint/config-conventional": "^17.8.1",
-        "husky": "^8.0.0",
-        "lint-staged": "^14.0.0",
-        "standard-version": "^9.5.0"
+        "@commitlint/cli": "20.1.0",
+        "@commitlint/config-conventional": "17.8.1",
+        "husky": "8.0.0",
+        "lint-staged": "14.0.0",
+        "standard-version": "9.5.0"
     }
 }
