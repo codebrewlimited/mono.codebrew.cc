@@ -88,6 +88,7 @@ jobs:
       - run:
           name: Conditional release
           command: |
+            echo "$V1_CHANGED"
             if [ "$V1_CHANGED" = "true" ]; then
               npm run release:v1
             fi
