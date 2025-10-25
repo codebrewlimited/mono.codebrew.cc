@@ -107,31 +107,53 @@ jobs:
           environment:
             HUSKY: 0
 
-      - run:
-          name: Build Docker images
-          command: |
-            source workspace-vars
-            if [ "$V1_CHANGED" = "true" ]; then
-              echo "🐳 Building Docker image for v1"
-              docker build -f Dockerfile -t myregistry/my-app:v1-$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
-            fi
-            if [ "$V2_CHANGED" = "true" ]; then
-              echo "🐳 Building Docker image for v2"
-              docker build -f Dockerfile -t myregistry/my-app:v2-$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
-            fi
+      # - run:
+      #     name: Build Docker images
+      #     command: |
+      #       source workspace-vars
+      #       if [ "$V1_CHANGED" = "true" ]; then
+      #         echo "🐳 Building Docker image for v1"
+      #         docker build -f Dockerfile -t myregistry/my-app:v1-$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
+      #       fi
+      #       if [ "$V2_CHANGED" = "true" ]; then
+      #         echo "🐳 Building Docker image for v2"
+      #         docker build -f Dockerfile -t myregistry/my-app:v2-$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
+      #       fi
+
+      # - run:
+      #     name: Push Docker images
+      #     command: |
+      #       echo $REGISTRY_PASS | docker login $REGISTRY_URL -u $REGISTRY_USER --password-stdin
+
+      #       if [ "$V1_CHANGED" = "true" ]; then
+      #         docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
+      #         docker push $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1
+      #       fi
+
+      #       if [ "$V2_CHANGED" = "true" ]; then
+      #         docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
+      #         docker push $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1
+      #       fi
 
       - run:
-          name: Push Docker images
+          name: Build & Push Docker images
           command: |
+            source workspace-vars
             echo $REGISTRY_PASS | docker login $REGISTRY_URL -u $REGISTRY_USER --password-stdin
 
             if [ "$V1_CHANGED" = "true" ]; then
-              docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
+              echo "🐳 Building and pushing Docker image for v1"
+              docker build -f Dockerfile \
+                -t $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1 \
+                --build-arg WORKSPACE=v1 .
               docker push $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1
             fi
 
             if [ "$V2_CHANGED" = "true" ]; then
-              docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
+              echo "🐳 Building and pushing Docker image for v2"
+              docker build -f Dockerfile \
+                -t $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1 \
+                --build-arg WORKSPACE=v2 .
               docker push $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1
             fi
 
