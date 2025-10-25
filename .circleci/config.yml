@@ -27,15 +27,12 @@ jobs:
 
             # Determine base commit for diff
             if [ -n "$CIRCLE_PULL_REQUEST" ]; then
-              # Pull request context
               BASE_BRANCH="origin/main"
               echo "PR detected. Comparing against $BASE_BRANCH"
             elif [ "$CIRCLE_BRANCH" = "main" ]; then
-              # Running on main — compare last commit only
               BASE_BRANCH="HEAD~1"
               echo "Main branch build. Comparing last commit only"
             else
-              # Feature branch build
               BASE_BRANCH="origin/main"
               echo "Feature branch detected. Comparing against $BASE_BRANCH"
             fi
@@ -46,68 +43,80 @@ jobs:
 
             if echo "$CHANGED_FILES" | grep -qE "^v1/"; then
               echo "✅ Detected changes in v1"
-              echo "V1_CHANGED=true" >> $BASH_ENV
+              echo "V1_CHANGED=true" >> workspace-vars
             else
               echo "ℹ️ No changes in v1"
-              echo "V1_CHANGED=true" >> $BASH_ENV
+              echo "V1_CHANGED=true" >> workspace-vars
             fi
 
             if echo "$CHANGED_FILES" | grep -qE "^v2/"; then
               echo "✅ Detected changes in v2"
-              echo "V2_CHANGED=true" >> $BASH_ENV
+              echo "V2_CHANGED=true" >> workspace-vars
             else
               echo "ℹ️ No changes in v2"
-              echo "V2_CHANGED=false" >> $BASH_ENV
+              echo "V2_CHANGED=false" >> workspace-vars
             fi
 
-      # - run:
-      #     name: Print results
-      #     command: |
-      #       source $BASH_ENV
-      #       echo "V1_CHANGED=$V1_CHANGED"
-      #       echo "V2_CHANGED=$V2_CHANGED"
+            echo "workspace-vars created:"
+            cat workspace-vars
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - workspace-vars
 
   release-and-build:
     executor: node-executor
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/repo
       - setup_remote_docker:
           docker_layer_caching: true
+
       - run:
-          name: Debug working directory
+          name: Load workspace vars
           command: |
-            pwd
-            ls -la
-            ls -la v1 || true
-            ls -la v2 || true
-            cat package.json | head -n 20
-            echo "$V1_CHANGED"
+            if [ -f workspace-vars ]; then
+              source workspace-vars
+            fi
+            echo "V1_CHANGED=$V1_CHANGED"
+            echo "V2_CHANGED=$V2_CHANGED"
+
       - run:
           name: Install dependencies
           command: npm ci
-          working_directory: ~/repo
+
       - run:
           name: Conditional release
           command: |
-            source $BASH_ENV
+            source workspace-vars
             if [ "$V1_CHANGED" = "true" ]; then
-              npm run release:v1
+              echo "📦 Running release for v1"
+              npm run version:v1
             fi
             if [ "$V2_CHANGED" = "true" ]; then
-              npm run release:v2
+              echo "📦 Running release for v2"
+              npm run version:v2
             fi
+
       - run:
           name: Build Docker images
           command: |
+            source workspace-vars
             if [ "$V1_CHANGED" = "true" ]; then
+              echo "🐳 Building Docker image for v1"
               docker build -f Dockerfile -t myregistry/my-app:v1-$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
             fi
             if [ "$V2_CHANGED" = "true" ]; then
+              echo "🐳 Building Docker image for v2"
               docker build -f Dockerfile -t myregistry/my-app:v2-$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
             fi
+
       - run:
           name: Push Docker images
           command: |
+            source workspace-vars
             if [ "$V1_CHANGED" = "true" ]; then
               docker push myregistry/my-app:v1-$CIRCLE_SHA1
             fi
