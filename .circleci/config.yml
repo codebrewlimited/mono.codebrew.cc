@@ -97,10 +97,12 @@ jobs:
             if [ "$V1_CHANGED" = "true" ]; then
               echo "📦 Running release for v1"
               npm run version:v1
+              npm run postversion
             fi
             if [ "$V2_CHANGED" = "true" ]; then
               echo "📦 Running release for v2"
               npm run version:v2
+              npm run postversion
             fi
 
       - run:
