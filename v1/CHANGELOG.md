@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.81](https://github.com/codebrewlimited/mono.codebrew.cc/compare/v3.1.80...v3.1.81) (2025-10-25)
+
 ### [3.1.80](https://github.com/codebrewlimited/mono.codebrew.cc/compare/v3.1.79...v3.1.80) (2025-10-25)
 
 ### [3.1.79](https://github.com/codebrewlimited/mono.codebrew.cc/compare/v3.1.78...v3.1.79) (2025-10-25)
