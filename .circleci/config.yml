@@ -91,6 +91,9 @@ jobs:
           name: Conditional release
           command: |
             source workspace-vars
+            git config --global user.email "ci-bot@codebrew.cc"
+            git config --global user.name "CI Bot"
+
             if [ "$V1_CHANGED" = "true" ]; then
               echo "📦 Running release for v1"
               npm run version:v1
