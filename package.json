@@ -1,5 +1,6 @@
 {
     "name": "mono.codebrew.cc",
+    "description": "ija min gol kamra tal banju",
     "private": true,
     "workspaces": [
         "v1",
