@@ -24,7 +24,7 @@ WORKDIR /app
 COPY --from=0 /app/$WORKSPACE/dist ./dist
 COPY --from=0 /app/$WORKSPACE/package*.json ./
 
-RUN npm ci --omit=dev
+RUN npm ci
 
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
