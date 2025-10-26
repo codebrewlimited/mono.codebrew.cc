@@ -141,13 +141,13 @@ jobs:
           command: |
             source workspace-vars
 
-            echo "🔧 Allowing insecure Docker registry access..."
-            echo '{ "insecure-registries": ["'"$REGISTRY_URL"'"] }' | sudo tee /etc/docker/daemon.json
-            sudo service docker restart
-            sleep 5
+            # echo "🔧 Allowing insecure Docker registry access..."
+            # echo '{ "insecure-registries": ["'"$REGISTRY_URL"'"] }' | sudo tee /etc/docker/daemon.json
+            # sudo service docker restart
+            # sleep 5
 
-            echo "🔐 Logging in to registry..."
-            echo $REGISTRY_PASS | docker login $REGISTRY_URL -u $REGISTRY_USER --password-stdin
+            echo "🔐 Logging in to registry (insecure mode)..."
+            docker login --username $REGISTRY_USER --password $REGISTRY_PASS http://$REGISTRY_URL
 
             if [ "$V1_CHANGED" = "true" ]; then
               echo "🐳 Building and pushing Docker image for v1"
