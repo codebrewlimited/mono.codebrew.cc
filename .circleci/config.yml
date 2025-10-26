@@ -143,20 +143,17 @@ jobs:
           command: |
             source workspace-vars
 
-            # echo "🔧 Allowing insecure Docker registry access..."
-            # echo '{ "insecure-registries": ["'"$REGISTRY_URL"'"] }' | sudo tee /etc/docker/daemon.json
-            # sudo service docker restart
-            # sleep 5
-
             echo "🔐 Logging in to registry"
             # docker login --username $REGISTRY_USER --password $REGISTRY_PASS http://
             echo $REGISTRY_PASS | docker login $REGISTRY_URL -u $REGISTRY_USER --password-stdin
 
             if [ "$V1_CHANGED" = "true" ]; then
               echo "🐳 Building and pushing Docker image for v1"
-              docker build -f Dockerfile \
-                -t $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1 \
-                --build-arg WORKSPACE=v1 .
+              # docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
+              docker build -f Dockerfile -t v1-temp --build-arg WORKSPACE=v1 .
+              # Tag with SHA1
+              docker tag v1-temp $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1
+              # Push the tagged image
               docker push $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1
             fi
 
