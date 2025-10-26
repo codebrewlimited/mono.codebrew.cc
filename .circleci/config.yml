@@ -150,8 +150,7 @@ jobs:
 
             echo "🔐 Logging in to registry"
             # docker login --username $REGISTRY_USER --password $REGISTRY_PASS http://
-            docker login $REGISTRY_URL -u $REGISTRY_USER -p $REGISTRY_PASS
-
+            echo $REGISTRY_PASS | docker login $REGISTRY_URL -u $REGISTRY_USER --password-stdin
 
             if [ "$V1_CHANGED" = "true" ]; then
               echo "🐳 Building and pushing Docker image for v1"
