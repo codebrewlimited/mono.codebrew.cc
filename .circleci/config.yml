@@ -74,6 +74,7 @@ jobs:
 
       - setup_remote_docker:
           docker_layer_caching: true
+          version: 20.10.18
 
       - run:
           name: Load workspace vars
@@ -138,6 +139,8 @@ jobs:
 
       - run:
           name: Build & Push Docker images
+          environment:
+            DOCKER_INSECURE_REGISTRIES: ec2-34-251-208-94.eu-west-1.compute.amazonaws.com:5837
           command: |
             source workspace-vars
 
@@ -146,8 +149,10 @@ jobs:
             # sudo service docker restart
             # sleep 5
 
-            echo "🔐 Logging in to registry (insecure mode)..."
-            docker login --username $REGISTRY_USER --password $REGISTRY_PASS http://$REGISTRY_URL
+            echo "🔐 Logging in to registry"
+            # docker login --username $REGISTRY_USER --password $REGISTRY_PASS http://
+            docker login $REGISTRY_URL -u $REGISTRY_USER -p $REGISTRY_PASS
+
 
             if [ "$V1_CHANGED" = "true" ]; then
               echo "🐳 Building and pushing Docker image for v1"
