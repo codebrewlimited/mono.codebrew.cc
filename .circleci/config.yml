@@ -71,6 +71,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/repo
+
       - setup_remote_docker:
           docker_layer_caching: true
 
@@ -139,6 +140,13 @@ jobs:
           name: Build & Push Docker images
           command: |
             source workspace-vars
+
+            echo "🔧 Allowing insecure Docker registry access..."
+            echo '{ "insecure-registries": ["'"$REGISTRY_URL"'"] }' | sudo tee /etc/docker/daemon.json
+            sudo service docker restart
+            sleep 5
+
+            echo "🔐 Logging in to registry..."
             echo $REGISTRY_PASS | docker login $REGISTRY_URL -u $REGISTRY_USER --password-stdin
 
             if [ "$V1_CHANGED" = "true" ]; then
