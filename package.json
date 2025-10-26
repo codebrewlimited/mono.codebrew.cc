@@ -1,6 +1,6 @@
 {
     "name": "mono.codebrew.cc",
-    "description": "ija min gol kamra tal banju",
+    "description": "Mono project: v1 & v2 workspaces with CircleCI and Docker integration for streamlined development",
     "private": true,
     "workspaces": [
         "v1",
