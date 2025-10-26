@@ -38,4 +38,4 @@ COPY --from=builder /app/$WORKSPACE/package*.json ./
 # RUN npm ci --omit=dev
 
 EXPOSE 8746
-CMD ["node", "dist/main.js"]
+CMD ["node", "main.js"]
