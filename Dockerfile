@@ -31,11 +31,11 @@ ARG WORKSPACE
 
 # Copy built artifacts
 COPY --from=builder /app/$WORKSPACE ./dist
-COPY --from=builder /app/v1/node_modules ./node_modules
+COPY --from=builder /app/v1/node_modules ./dist/node_modules
 COPY --from=builder /app/$WORKSPACE/package*.json ./
 
 # Install production dependencies
 # RUN npm ci --omit=dev
 
 EXPOSE 8746
-CMD ["node", "main.js"]
+CMD ["node", "dist/main.js"]
