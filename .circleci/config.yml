@@ -46,7 +46,7 @@ jobs:
               echo "V1_CHANGED=true" >> workspace-vars
             else
               echo "ℹ️ No changes in v1"
-              echo "V1_CHANGED=true" >> workspace-vars
+              echo "V1_CHANGED=false" >> workspace-vars
             fi
 
             if echo "$CHANGED_FILES" | grep -qE "^v2/"; then
