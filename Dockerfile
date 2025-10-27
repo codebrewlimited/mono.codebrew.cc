@@ -13,8 +13,9 @@ COPY package*.json package-lock.json ./
 COPY $WORKSPACE/package*.json ./$WORKSPACE/
 
 # Install dependencies for the workspace
-RUN npm install --workspace $WORKSPACE --omit=dev
-RUN npm install --workspace $WORKSPACE
+# RUN npm install --workspace $WORKSPACE
+# RUN npm install --workspace $WORKSPACE --omit=dev --legacy-peer-deps
+RUN npm ci
 
 # Copy workspace source
 COPY $WORKSPACE ./$WORKSPACE/
@@ -22,20 +23,28 @@ COPY $WORKSPACE ./$WORKSPACE/
 # Build workspace
 RUN npm run build --workspace $WORKSPACE
 
+# -----------------------------
 # Stage 2: Runtime
+# -----------------------------
 FROM node:22-alpine
-WORKDIR /app
 
-# Pass ARG again if needed
+WORKDIR /app
 ARG WORKSPACE
 
-# Copy built artifacts
-COPY --from=builder /app/$WORKSPACE ./dist
-COPY --from=builder /app/v1/node_modules ./dist/node_modules
+# Copy only the built artifacts to /app/dist
+COPY --from=builder /app/$WORKSPACE/dist ./
+
+# Copy workspace node_modules for runtime
+COPY --from=builder /app/$WORKSPACE/node_modules ./node_modules
+
+# Copy package.json (optional, if needed by app)
 COPY --from=builder /app/$WORKSPACE/package*.json ./
+COPY --from=builder /app/package-lock.json ./
 
-# Install production dependencies
-# RUN npm ci --omit=dev
+RUN touch /myfile.txt
 
+# Expose your application port
 EXPOSE 8746
+
+# Start the app
 CMD ["node", "dist/main.js"]
