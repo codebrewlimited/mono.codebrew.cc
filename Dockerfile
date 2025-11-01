@@ -41,8 +41,6 @@ COPY --from=builder /app/$WORKSPACE/node_modules ./node_modules
 COPY --from=builder /app/$WORKSPACE/package*.json ./
 COPY --from=builder /app/package-lock.json ./
 
-RUN touch /myfile.txt
-
 # Expose your application port
 EXPOSE 8746
 
