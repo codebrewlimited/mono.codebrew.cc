@@ -175,7 +175,7 @@ jobs:
               ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
 
             # 7- Remove the ingress rule
-            ~/bin/aws ec2 revoke-security-group-ingress --region $AWS_REGION --group-id $SG_ID --protocol tcp --port 22 --cidr $PUBLIC_IP/24
+            ~/bin/aws ec2 revoke-security-group-ingress --region $AWS_DEFAULT_REGION --group-id $SG_ID --protocol tcp --port 22 --cidr $PUBLIC_IP/24
 
             if [ "$V1_CHANGED" = "false" ]; then
               echo "🚀 Deploying v1 over SSH"
