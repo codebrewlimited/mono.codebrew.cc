@@ -108,19 +108,19 @@ jobs:
             source workspace-vars
 
             if [ "$V1_CHANGED" = "true" ]; then
-                echo "🚀 Deploying v1 over SSH"
+              echo "🚀 Deploying v1 over SSH"
 
-                cd v1
-                npm ci
-                npm run build
-                cd ..
+              cd v1
+              npm ci
+              npm run build
+              cd ..
 
-                rsync -avz --delete \
-                  -e "ssh -o StrictHostKeyChecking=no" \
-                  ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
+              rsync -avz --delete \
+                -e "ssh -o StrictHostKeyChecking=no" \
+                ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
 
-                ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd /var/api/test.codebrew.cc/v1 && npm ci --omit=dev && pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1"
-              fi
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd /var/api/test.codebrew.cc/v1 && npm ci --omit=dev && pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1"
+            fi
 
             if [ "$V2_CHANGED" = "true" ]; then
             #               echo "🚀 Deploying v2 over SSH"
