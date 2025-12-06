@@ -163,7 +163,7 @@ jobs:
             pwd
             ls
             npm run build
-            echo "🏭 Build Complete"
+            echo "🏭 API Build Complete"
             cd ..
 
             rsync -avz --delete \
