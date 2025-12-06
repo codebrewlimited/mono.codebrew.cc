@@ -21,10 +21,6 @@ jobs:
             git fetch --unshallow || true
 
       - run:
-          name: Install rsync
-          command: sudo apt-get update && sudo apt-get install -y rsync
-
-      - run:
           name: Detect changes since base
           command: |
             echo "🔍 Detecting changes..."
@@ -105,6 +101,9 @@ jobs:
           command: git push --follow-tags --no-verify
           environment:
             HUSKY: 0
+      - run:
+          name: Install rsync
+          command: sudo apt-get update && sudo apt-get install -y rsync
 
       - run:
           name: Build & Deploy (SSH Deploy)
