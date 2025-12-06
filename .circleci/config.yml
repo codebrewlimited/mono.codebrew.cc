@@ -122,7 +122,6 @@ jobs:
               ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
               cd /var/api/test.codebrew.cc/v1 && npm ci --omit=dev
               pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
-              EOF
 
             fi
 
@@ -142,7 +141,6 @@ jobs:
             # cd /var/www/v2
             # npm ci --omit=dev
             # pm2 restart v2 --update-env || pm2 start dist/main.js --name v2
-            # EOF
             fi
 
 workflows:
