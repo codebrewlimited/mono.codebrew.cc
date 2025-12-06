@@ -114,14 +114,14 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-            aws --version
+            /usr/local/bin/aws --version
 
             # 2- Get the public IP of the current CircleCI runner
             PUBLIC_IP=$(curl ipinfo.io/ip)
 
             # 3- Get AWS Region
             # TODO Don't forget to replcae by your own Region
-            AWS_REGION=us-east-2
+            AWS_REGION=eu-west-1
 
             # 4- Get SG ID
             # TODO Don't forget to replace by your own SG ID
