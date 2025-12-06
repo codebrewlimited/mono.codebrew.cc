@@ -42,18 +42,14 @@ jobs:
             echo "$CHANGED_FILES"
 
             if echo "$CHANGED_FILES" | grep -qE "^v1/"; then
-              echo "✅ Detected changes in v1"
               echo "V1_CHANGED=true" >> workspace-vars
             else
-              echo "ℹ️ No changes in v1"
               echo "V1_CHANGED=false" >> workspace-vars
             fi
 
             if echo "$CHANGED_FILES" | grep -qE "^v2/"; then
-              echo "✅ Detected changes in v2"
               echo "V2_CHANGED=true" >> workspace-vars
             else
-              echo "ℹ️ No changes in v2"
               echo "V2_CHANGED=false" >> workspace-vars
             fi
 
@@ -72,9 +68,6 @@ jobs:
       - attach_workspace:
           at: ~/repo
 
-      - setup_remote_docker:
-          docker_layer_caching: true
-
       - run:
           name: Load workspace vars
           command: |
@@ -85,7 +78,7 @@ jobs:
             echo "V2_CHANGED=$V2_CHANGED"
 
       - run:
-          name: Install dependencies
+          name: Install root dependencies
           command: npm ci
 
       - run:
@@ -103,66 +96,64 @@ jobs:
               echo "📦 Running release for v2"
               npm run version:v2
             fi
+
       - run:
           command: git push --follow-tags --no-verify
           environment:
             HUSKY: 0
 
-      # - run:
-      #     name: Build Docker images
-      #     command: |
-      #       source workspace-vars
-      #       if [ "$V1_CHANGED" = "true" ]; then
-      #         echo "🐳 Building Docker image for v1"
-      #         docker build -f Dockerfile -t myregistry/my-app:v1-$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
-      #       fi
-      #       if [ "$V2_CHANGED" = "true" ]; then
-      #         echo "🐳 Building Docker image for v2"
-      #         docker build -f Dockerfile -t myregistry/my-app:v2-$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
-      #       fi
-
-      # - run:
-      #     name: Push Docker images
-      #     command: |
-      #       echo $REGISTRY_PASS | docker login $REGISTRY_URL -u $REGISTRY_USER --password-stdin
-
-      #       if [ "$V1_CHANGED" = "true" ]; then
-      #         docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
-      #         docker push $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1
-      #       fi
-
-      #       if [ "$V2_CHANGED" = "true" ]; then
-      #         docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1 --build-arg WORKSPACE=v2 .
-      #         docker push $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1
-      #       fi
-
       - run:
-          name: Build & Push Docker images
-          environment:
-            DOCKER_INSECURE_REGISTRIES: ec2-34-251-208-94.eu-west-1.compute.amazonaws.com:5837
+          name: Build & Deploy (SSH Deploy)
           command: |
             source workspace-vars
 
-            echo "🔐 Logging in to registry"
-            # docker login --username $REGISTRY_USER --password $REGISTRY_PASS http://
-            echo $REGISTRY_PASS | docker login $REGISTRY_URL -u $REGISTRY_USER --password-stdin
-
+            ###########################################################
+            # 🚀 DEPLOY V1
+            ###########################################################
             if [ "$V1_CHANGED" = "true" ]; then
-              echo "🐳 Building and pushing Docker image for v1"
-              # docker build -f Dockerfile -t $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1 --build-arg WORKSPACE=v1 .
-              docker build -f Dockerfile -t v1-temp --build-arg WORKSPACE=v1 .
-              # Tag with SHA1
-              docker tag v1-temp $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1
-              # Push the tagged image
-              docker push $REGISTRY_URL/monorepo/v1:$CIRCLE_SHA1
+              echo "🚀 Deploying v1 over SSH"
+
+              # First, build inside CircleCI
+              cd v1
+              npm ci
+              npm run build
+              cd ..
+
+              # Push build to server
+              rsync -avz --delete \
+                -e "ssh -o StrictHostKeyChecking=no" \
+                ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
+
+              # Install only prod deps + restart
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+                cd /var/api/test.codebrew.cc/v1
+                npm ci --omit=dev
+                pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
+              EOF
             fi
 
+            ###########################################################
+            # 🚀 DEPLOY V2
+            ###########################################################
             if [ "$V2_CHANGED" = "true" ]; then
-              echo "🐳 Building and pushing Docker image for v2"
-              docker build -f Dockerfile \
-                -t $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1 \
-                --build-arg WORKSPACE=v2 .
-              docker push $REGISTRY_URL/monorepo/v2:$CIRCLE_SHA1
+              echo "🚀 Deploying v2 over SSH"
+
+              # Build inside CircleCI
+              cd v2
+              npm ci
+              npm run build
+              cd ..
+
+              # Push build to server
+              rsync -avz --delete \
+                -e "ssh -o StrictHostKeyChecking=no" \
+                ./v2/ $SSH_USER@$SSH_HOST:/var/www/v2/
+
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+                cd /var/www/v2
+                npm ci --omit=dev
+                pm2 restart v2 --update-env || pm2 start dist/main.js --name v2
+              EOF
             fi
 
 workflows:
