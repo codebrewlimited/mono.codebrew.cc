@@ -135,7 +135,7 @@ jobs:
             PUBLIC_IP=$(curl ipinfo.io/ip)
 
             # 3- Get AWS Region
-            # TODO Don't forget to replcae by your own Region
+            # TODO Don't forget to replace by your own Region
 
             # 4- Get SG ID
             # TODO Don't forget to replace by your own SG ID
