@@ -107,9 +107,6 @@ jobs:
           command: |
             source workspace-vars
 
-            ###########################################################
-            # 🚀 DEPLOY V1
-            ###########################################################
             if [ "$V1_CHANGED" = "true" ]; then
               echo "🚀 Deploying v1 over SSH"
 
@@ -122,36 +119,27 @@ jobs:
                 -e "ssh -o StrictHostKeyChecking=no" \
                 ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
 
-              # SSH with heredoc – NO backslash here
-              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
-cd /var/api/test.codebrew.cc/v1
-npm ci --omit=dev
-pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
-EOF
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST <<'EOF' && cd /var/api/test.codebrew.cc/v1 && npm ci --omit=dev && pm2 restart test.codebrew.cc/v1 --update-env #|| pm2 start dist/main.js --name v1 EOF
             fi
 
-            ###########################################################
-            # 🚀 DEPLOY V2
-            ###########################################################
             if [ "$V2_CHANGED" = "true" ]; then
-              echo "🚀 Deploying v2 over SSH"
+              #               echo "🚀 Deploying v2 over SSH"
 
-              cd v2
-              npm ci
-              npm run build
-              cd ..
+              #               cd v2
+              #               npm ci
+              #               npm run build
+              #               cd ..
 
-              rsync -avz --delete \
-                -e "ssh -o StrictHostKeyChecking=no" \
-                ./v2/ $SSH_USER@$SSH_HOST:/var/www/v2/
+              #               rsync -avz --delete \
+              #                 -e "ssh -o StrictHostKeyChecking=no" \
+              #                 ./v2/ $SSH_USER@$SSH_HOST:/var/www/v2/
 
-              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
-cd /var/www/v2
-npm ci --omit=dev
-pm2 restart v2 --update-env || pm2 start dist/main.js --name v2
-EOF
+              #               ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST <<'EOF'
+              # cd /var/www/v2
+              # npm ci --omit=dev
+              # pm2 restart v2 --update-env || pm2 start dist/main.js --name v2
+              # EOF
             fi
-
 
 workflows:
   version: 2
