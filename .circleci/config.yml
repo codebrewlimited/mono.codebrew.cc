@@ -166,6 +166,7 @@ jobs:
 
               echo "🚀 Restarting app..."
               pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
+              
             '
             # rsync -avz --delete \
             #   -e "ssh -o StrictHostKeyChecking=no" \
