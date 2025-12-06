@@ -155,7 +155,8 @@ jobs:
               cd /var/api/test.codebrew.cc/v1
 
               echo "📦 Pulling latest code..."
-              git pull
+              git fetch origin main
+              git reset --hard origin/main
 
               echo "📦 Installing dependencies..."
               npm i
