@@ -141,10 +141,6 @@ jobs:
             # TODO Don't forget to replace by your own SG ID
             # SG_ID=sg-XXXXXXXX
 
-            echo "$SSH_USER"
-            echo "TEEESSSSSSSSSSSSSTTTTTTTTTTTTTTTTTTTT"
-            echo "$SSH_HOST"
-
             # 4- Add an ingress rule to the security group
             aws ec2 authorize-security-group-ingress --region $AWS_DEFAULT_REGION --group-id $SG_ID \
               --protocol tcp --port 22 --cidr $PUBLIC_IP/24
