@@ -143,7 +143,7 @@ jobs:
 
             # 4- Add an ingress rule to the security group
             aws ec2 authorize-security-group-ingress --region $AWS_DEFAULT_REGION --group-id $SG_ID \
-              --protocol tcp --port 22 --cidr $PUBLIC_IP/24
+              --protocol tcp --port 22  --description "Temporary SSH access for CircleCI deploy" --cidr $PUBLIC_IP/24
 
             # 5- Give the ingress rule some time to propogate
             sleep 5
