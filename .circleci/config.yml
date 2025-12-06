@@ -112,7 +112,6 @@ jobs:
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
-            echo "📦 Running release for v2"
             aws --version
 
       - run:
@@ -131,6 +130,8 @@ jobs:
           name: Build & Deploy (SSH Deploy)
           command: |
             source workspace-vars
+
+            echo "📦 Running release for v2"
 
             # 2- Get the public IP of the current CircleCI runner
             PUBLIC_IP=$(curl ipinfo.io/ip)
