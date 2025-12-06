@@ -119,7 +119,7 @@ jobs:
                 -e "ssh -o StrictHostKeyChecking=no" \
                 ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
 
-              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \<< 'EOF'
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
               cd /var/api/test.codebrew.cc/v1 && npm ci --omit=dev
               pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
               EOF
