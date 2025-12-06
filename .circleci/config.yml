@@ -131,11 +131,8 @@ jobs:
           command: |
             source workspace-vars
 
-            echo "$SG_ID"
-
             # 2- Get the public IP of the current CircleCI runner
             PUBLIC_IP=$(curl ipinfo.io/ip)
-            echo "🌐 $PUBLIC_IP"
 
             # 3- Get AWS Region
             # TODO Don't forget to replcae by your own Region
@@ -164,6 +161,7 @@ jobs:
             pwd
             ls
             npm run build
+            echo "🏭 Build Complete"
             cd ..
 
             rsync -avz --delete \
