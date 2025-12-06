@@ -125,7 +125,7 @@ jobs:
                 ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
 
               # Install only prod deps + restart
-              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \<< 'EOF'
                 cd /var/api/test.codebrew.cc/v1
                 npm ci --omit=dev
                 pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
@@ -149,7 +149,7 @@ jobs:
                 -e "ssh -o StrictHostKeyChecking=no" \
                 ./v2/ $SSH_USER@$SSH_HOST:/var/www/v2/
 
-              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \<< 'EOF'
                 cd /var/www/v2
                 npm ci --omit=dev
                 pm2 restart v2 --update-env || pm2 start dist/main.js --name v2
