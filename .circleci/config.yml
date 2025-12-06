@@ -113,23 +113,21 @@ jobs:
             if [ "$V1_CHANGED" = "true" ]; then
               echo "🚀 Deploying v1 over SSH"
 
-              # First, build inside CircleCI
               cd v1
               npm ci
               npm run build
               cd ..
 
-              # Push build to server
               rsync -avz --delete \
                 -e "ssh -o StrictHostKeyChecking=no" \
                 ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
 
-              # Install only prod deps + restart
-              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \<< 'EOF'
-                cd /var/api/test.codebrew.cc/v1
-                npm ci --omit=dev
-                pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
-              EOF
+              # SSH with heredoc – NO backslash here
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+cd /var/api/test.codebrew.cc/v1
+npm ci --omit=dev
+pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
+EOF
             fi
 
             ###########################################################
@@ -138,23 +136,22 @@ jobs:
             if [ "$V2_CHANGED" = "true" ]; then
               echo "🚀 Deploying v2 over SSH"
 
-              # Build inside CircleCI
               cd v2
               npm ci
               npm run build
               cd ..
 
-              # Push build to server
               rsync -avz --delete \
                 -e "ssh -o StrictHostKeyChecking=no" \
                 ./v2/ $SSH_USER@$SSH_HOST:/var/www/v2/
 
-              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \<< 'EOF'
-                cd /var/www/v2
-                npm ci --omit=dev
-                pm2 restart v2 --update-env || pm2 start dist/main.js --name v2
-              EOF
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+cd /var/www/v2
+npm ci --omit=dev
+pm2 restart v2 --update-env || pm2 start dist/main.js --name v2
+EOF
             fi
+
 
 workflows:
   version: 2
