@@ -149,6 +149,9 @@ jobs:
             sleep 5
 
             # 6- SSH to the server to deploy
+
+            echo "$SSH_USER@$SSH_HOST"
+
             ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \
             # other commands
             # TODO Perform steps to deploy
