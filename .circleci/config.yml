@@ -149,26 +149,18 @@ jobs:
             sleep 5
 
             # 6- SSH to the server to deploy
-
-
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST \
-            # other commands
-            # TODO Perform steps to deploy
-            # .
-            # .
-            # .
-
-            cd v1
-            npm ci
-            pwd
-            ls
-            npm run build
-            echo "🏭 API Build Complete"
-            cd ..
-
-            rsync -avz --delete \
-              -e "ssh -o StrictHostKeyChecking=no" \
-              ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST '
+              cd v1
+              npm ci
+              pwd
+              ls
+              npm run build
+              echo "🏭 API Build Complete"
+              cd ..
+            '
+            # rsync -avz --delete \
+            #   -e "ssh -o StrictHostKeyChecking=no" \
+            #   ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
 
             # 7- Remove the ingress rule
             ~/bin/aws ec2 revoke-security-group-ingress --region $AWS_DEFAULT_REGION --group-id $SG_ID --protocol tcp --port 22 --cidr $PUBLIC_IP/24
