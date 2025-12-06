@@ -107,7 +107,7 @@ jobs:
           command: |
             source workspace-vars
 
-            if [ "$V1_CHANGED" = "true" ]; then
+            if [ "$V1_CHANGED" = "false" ]; then
               echo "🚀 Deploying v1 over SSH"
 
               cd v1
