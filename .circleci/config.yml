@@ -113,6 +113,7 @@ jobs:
               cd v1
               npm ci
               pwd
+              ls
               npm run build
               cd ..
 
