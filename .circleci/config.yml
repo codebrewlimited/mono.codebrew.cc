@@ -131,11 +131,12 @@ jobs:
           command: |
             source workspace-vars
 
+            echo "$SG_ID"
             echo "📦 Running release for v2"
 
             # 2- Get the public IP of the current CircleCI runner
             PUBLIC_IP=$(curl ipinfo.io/ip)
-            echo $PUBLIC_IP
+            echo "$PUBLIC_IP"
 
             # 3- Get AWS Region
             # TODO Don't forget to replcae by your own Region
@@ -144,7 +145,6 @@ jobs:
             # TODO Don't forget to replace by your own SG ID
             # SG_ID=sg-XXXXXXXX
 
-            echo $SG_ID
             # 4- Add an ingress rule to the security group
             aws ec2 authorize-security-group-ingress --region $AWS_DEFAULT_REGION --group-id $SG_ID \
               --protocol tcp --port 22 --cidr $PUBLIC_IP/24
