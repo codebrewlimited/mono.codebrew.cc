@@ -138,7 +138,7 @@ jobs:
             #                 -e "ssh -o StrictHostKeyChecking=no" \
             #                 ./v2/ $SSH_USER@$SSH_HOST:/var/www/v2/
 
-            #               ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST <<'EOF'
+            #               ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
             # cd /var/www/v2
             # npm ci --omit=dev
             # pm2 restart v2 --update-env || pm2 start dist/main.js --name v2
