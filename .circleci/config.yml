@@ -106,10 +106,8 @@ jobs:
           command: sudo apt-get update && sudo apt-get install -y rsync
 
       - run:
-          name: Build & Deploy (SSH Deploy)
+          name: Install AWS CLI
           command: |
-            source workspace-vars
-
             # 1- Install AWS CLI
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
@@ -117,19 +115,35 @@ jobs:
             echo "📦 Running release for v2"
             aws --version
 
+      - run:
+          name: Configure AWS Credentials
+          command: |
+            source workspace-vars
+
+            mkdir -p ~/.aws
+            printf "[default]\naws_access_key_id=$AWS_ACCESS_KEY_ID\naws_secret_access_key=$AWS_SECRET_ACCESS_KEY\nregion=$AWS_DEFAULT_REGION\n" > ~/.aws/credentials
+
+      - run:
+          name: Test AWS
+          command: aws sts get-caller-identity
+
+      - run:
+          name: Build & Deploy (SSH Deploy)
+          command: |
+            source workspace-vars
+
             # 2- Get the public IP of the current CircleCI runner
             PUBLIC_IP=$(curl ipinfo.io/ip)
 
             # 3- Get AWS Region
             # TODO Don't forget to replcae by your own Region
-            AWS_REGION=eu-west-1
 
             # 4- Get SG ID
             # TODO Don't forget to replace by your own SG ID
             # SG_ID=sg-XXXXXXXX
 
             # 4- Add an ingress rule to the security group
-            aws ec2 authorize-security-group-ingress --region $AWS_REGION --group-id $SG_ID \
+            aws ec2 authorize-security-group-ingress --region $AWS_DEFAULT_REGION --group-id $SG_ID \
               --protocol tcp --port 22 --cidr $PUBLIC_IP/24
 
             # 5- Give the ingress rule some time to propogate
