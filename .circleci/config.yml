@@ -142,6 +142,7 @@ jobs:
             # SG_ID=sg-XXXXXXXX
 
             echo "$SSH_USER"
+            echo "TEEESSSSSSSSSSSSSTTTTTTTTTTTTTTTTTTTT"
             echo "$SSH_HOST"
 
             # 4- Add an ingress rule to the security group
