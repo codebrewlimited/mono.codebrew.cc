@@ -4,18 +4,53 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Client App</title>
+    <title>Mono Repo Docs</title>
 
-    <!-- Tailwind CDN for quick styling -->
+    <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Typography Plugin (for prose) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {},
+            },
+            plugins: [
+                function ({
+                    addBase
+                }) {
+                    addBase({
+                        '.prose pre': {
+                            backgroundColor: '#f5f5f5',
+                            padding: '1rem',
+                            borderRadius: '0.5rem',
+                        },
+                    });
+                },
+            ],
+        };
+    </script>
+
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- ShowdownJS -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
+
+    <style>
+        body {
+            background-color: #fafafa;
+            font-family: system-ui, sans-serif;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-50 text-gray-900 font-sans min-h-screen">
+<body>
+    <div class="max-w-3xl mx-auto py-10 px-6">
+        <div id="root" class="prose prose-slate"></div>
+    </div>
 
-    <!-- Main app mount point -->
-    <div id="root" class="p-6"></div>
-
-    <!-- Load main.js -->
     <script type="module" src="/src/main.js"></script>
 </body>
 
