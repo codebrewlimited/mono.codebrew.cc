@@ -1,7 +1,7 @@
 {
   "name": "v1",
   "description": "Minimal TypeScript API for demo and testing purposes.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.json",
