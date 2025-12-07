@@ -5,8 +5,8 @@ orbs:
 
 executors:
   node-executor:
-    docker:
-      - image: cimg/node:22.16
+    machine:
+      image: ubuntu-2204:2023.09
     working_directory: ~/repo
 
 jobs:
@@ -25,7 +25,6 @@ jobs:
           command: |
             echo "🔍 Detecting changes..."
 
-            # Determine base commit for diff
             if [ -n "$CIRCLE_PULL_REQUEST" ]; then
               BASE_BRANCH="origin/main"
               echo "PR detected. Comparing against $BASE_BRANCH"
@@ -37,7 +36,6 @@ jobs:
               echo "Feature branch detected. Comparing against $BASE_BRANCH"
             fi
 
-            # Exclude any file named CHANGELOG.md but always include package.json
             CHANGED_FILES=$(git diff --name-only $BASE_BRANCH...HEAD | grep -v -E "CHANGELOG.md|package.json" || echo "")
 
             if git diff --name-only $BASE_BRANCH...HEAD | grep -q "package.json"; then
@@ -94,7 +92,7 @@ jobs:
 
       - run:
           name: Install root dependencies
-          command: npm install --workspaces
+          command: npm ci --workspaces
 
       - run:
           name: Build test targets
@@ -170,14 +168,16 @@ jobs:
           command: git push --follow-tags --no-verify
           environment:
             HUSKY: 0
+
       - run:
-          name: Install rsync
-          command: sudo apt-get update && sudo apt-get install -y rsync
+          name: Install system dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y rsync unzip curl
 
       - run:
           name: Install AWS CLI
           command: |
-            # 1- Install AWS CLI
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
             sudo ./aws/install
@@ -187,7 +187,6 @@ jobs:
           name: Configure AWS Credentials
           command: |
             source workspace-vars
-
             mkdir -p ~/.aws
             printf "[default]\naws_access_key_id=$AWS_ACCESS_KEY_ID\naws_secret_access_key=$AWS_SECRET_ACCESS_KEY\nregion=$AWS_DEFAULT_REGION\n" > ~/.aws/credentials
 
@@ -200,68 +199,40 @@ jobs:
           command: |
             source workspace-vars
 
-            # 1- Get the public IP of the current CircleCI runner
-            PUBLIC_IP=$(curl ipinfo.io/ip)
+            PUBLIC_IP=$(curl -s ipinfo.io/ip)
 
-            # 2- Add an ingress rule to the security group
             aws ec2 authorize-security-group-ingress --region $AWS_DEFAULT_REGION --group-id $SG_ID \
               --protocol tcp --port 22 --cidr $PUBLIC_IP/24
 
-            # 3- Give the ingress rule some time to propogate
             sleep 5
 
-            # 4- SSH to the server to deploy
             if [ "$V1_CHANGED" = "true" ]; then
               echo "🚀 Deploying v1 over SSH"
-
               ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST '
-                set -e  # fail fast
-
+                set -e
                 cd /var/api/test.codebrew.cc
-
-                echo "📦 Pulling latest code..."
                 git fetch origin main
                 git reset --hard origin/main
-                
-                echo "📦 Installing dependencies..."
                 cd v1
-                npm i
-
-                echo "🏗️ Building project..."
+                npm ci
                 npm run build
-
-                echo "🚀 Restarting app..."
                 pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
               '
             fi
 
             if [ "$CLIENT_CHANGED" = "true" ]; then
               echo "🚀 Deploying client app over SSH"
-
               ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST '
-                set -e  # fail fast
-
+                set -e
                 cd /var/api/test.codebrew.cc
-
-                echo "📦 Pulling latest code..."
                 git fetch origin main
                 git reset --hard origin/main
-                
-                echo "📦 Installing dependencies..."
                 cd client
-                npm i
-
-                echo "🏗️ Building project..."
+                npm ci
                 npm run build
               '
             fi
 
-
-            # rsync -avz --delete \
-            #   -e "ssh -o StrictHostKeyChecking=no" \
-            #   ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
-
-            # 5- Remove the ingress rule
             aws ec2 revoke-security-group-ingress --region $AWS_DEFAULT_REGION --group-id $SG_ID --protocol tcp --port 22 --cidr $PUBLIC_IP/24
 
 workflows:
@@ -269,14 +240,12 @@ workflows:
   build-and-release:
     jobs:
       - detect-changes
-
       - build-and-test:
           requires:
             - detect-changes
           filters:
             branches:
               only: main
-
       - release-and-build:
           requires:
             - build-and-test
