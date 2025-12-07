@@ -196,68 +196,38 @@ jobs:
             sleep 5
 
             # 4- SSH to the server to deploy
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST '
-              set -e  # fail fast
+            if [ "$V1_CHANGED" = "true" ]; then
+              echo "🚀 Deploying v1 over SSH"
 
-              cd /var/api/test.codebrew.cc
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST '
+                set -e  # fail fast
 
-              echo "📦 Pulling latest code..."
-              git fetch origin main
-              git reset --hard origin/main
-              
-              echo "📦 Installing dependencies..."
-              cd v1
-              npm i
+                cd /var/api/test.codebrew.cc
 
-              echo "🏗️ Building project..."
-              npm run build
+                echo "📦 Pulling latest code..."
+                git fetch origin main
+                git reset --hard origin/main
+                
+                echo "📦 Installing dependencies..."
+                cd v1
+                npm i
 
-              echo "🚀 Restarting app..."
-              pwd
-              pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
+                echo "🏗️ Building project..."
+                npm run build
 
-            '
+                echo "🚀 Restarting app..."
+                pwd
+                pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
+              '
+            fi
+
+
             # rsync -avz --delete \
             #   -e "ssh -o StrictHostKeyChecking=no" \
             #   ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
 
             # 5- Remove the ingress rule
             aws ec2 revoke-security-group-ingress --region $AWS_DEFAULT_REGION --group-id $SG_ID --protocol tcp --port 22 --cidr $PUBLIC_IP/24
-
-            if [ "$V1_CHANGED" = "true" ]; then
-              echo "🚀 Deploying v1 over SSH"
-
-              # cd v1
-              # npm ci
-              # pwd
-              # ls
-              # npm run build
-              # cd ..
-
-              # rsync -avz --delete \
-              #   -e "ssh -o StrictHostKeyChecking=no" \
-              #   ./v1/ $SSH_USER@$SSH_HOST:/var/api/test.codebrew.cc/v1/
-
-              # ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd /var/api/test.codebrew.cc/v1 && npm ci --omit=dev && pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1"
-            fi
-
-            if [ "$V2_CHANGED" = "true" ]; then
-              echo "🚀 Deploying v2 over SSH"
-
-              #               cd v2
-              #               npm ci
-              #               npm run build
-              #               cd ..
-
-              #               rsync -avz --delete \
-              #                 -e "ssh -o StrictHostKeyChecking=no" \
-              #                 ./v2/ $SSH_USER@$SSH_HOST:/var/www/v2/
-
-              #               ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
-              # cd /var/www/v2
-              # npm ci --omit=dev
-              # pm2 restart v2 --update-env || pm2 start dist/main.js --name v2
-            fi
 
 workflows:
   version: 2

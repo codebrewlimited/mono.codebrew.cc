@@ -7,6 +7,6 @@ describe('Basic Express App Tests', () => {
     const res = await request(app).get('/');
 
     expect(res.status).toBe(200);
-    expect(res.text).toContain('Hello World from v1! 🏭d');
+    expect(res.text).toContain('Hello World from v1! 🏗️');
   });
 });
