@@ -221,8 +221,28 @@ jobs:
                 npm run build
 
                 echo "🚀 Restarting app..."
-                pwd
                 pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1
+              '
+            fi
+
+            if [ "$CLIENT_CHANGED" = "true" ]; then
+              echo "🚀 Deploying client app over SSH"
+
+              ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST '
+                set -e  # fail fast
+
+                cd /var/api/test.codebrew.cc
+
+                echo "📦 Pulling latest code..."
+                git fetch origin main
+                git reset --hard origin/main
+                
+                echo "📦 Installing dependencies..."
+                cd client
+                npm i
+
+                echo "🏗️ Building project..."
+                npm run build
               '
             fi
 

@@ -1,1 +1,1 @@
-document.getElementById('root').innerHTML = `<h1>Hello from Client!</h1>`;
+document.getElementById('root').innerHTML = `<h2>Hello from Client!</h2>`;
