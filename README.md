@@ -5,7 +5,7 @@ This repository contains a mono project with two workspaces:
 - **v1** – A barebone TypeScript API for demo purposes 🏭
 - **client** (formerly v2) – Future frontend or client workspace 💻
 
-The project uses **CircleCI** for CI/CD, conditional builds, and deployments, with **AWS integration** ☁️ for secure SSH-based deployments.
+This mono repository provides a fully automated pipeline to detect changes, build, test, release, and deploy TypeScript and client applications with **CircleCI** for CI/CD integration, **AWS** ☁️ for secure SSH-based deployments, and strict commit conventions.
 
 ---
 
@@ -18,6 +18,49 @@ The project uses **CircleCI** for CI/CD, conditional builds, and deployments, wi
 ├── package.json  # Root dependencies
 └── .circleci/
     └── config.yml # CI/CD pipeline
+```
+
+---
+
+## Commit Message Enforcement 📝
+
+This project enforces **conventional commit messages** to ensure consistent versioning and changelog generation.
+
+- **Husky** is used to run Git hooks before commits and pushes.
+- **Commitlint** ensures commits follow the [Conventional Commits](https://www.conventionalcommits.org/) specification.
+
+The project uses the [@commitlint/config-conventional](https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional) preset to validate commit messages.
+
+**Example commit messages:**
+
+```text
+feat(v1): add new API endpoint
+fix(client): correct typo in README
+chore: update dependencies
+```
+
+**Husky integration:**
+
+```json
+"husky": {
+  "hooks": {
+    "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+  }
+}
+```
+
+> ⚠️ Commits that do not follow this convention will be rejected, helping maintain a clean history and enabling automated versioning in CircleCI.
+
+---
+
+### CI/CD Flow 🌊
+
+```
+detect-changes 🔍
+       ↓
+build-and-test 🏗️
+       ↓
+release-and-build 🚀
 ```
 
 ---
@@ -59,7 +102,7 @@ These variables control which jobs run in subsequent steps.
 
 ---
 
-## `$ARGS` / Workspace Variables ⚙️
+## `$ARGS` / CircleCI Workspace Variables ⚙️
 
 | Variable     | Description                                                                                 |
 | ------------ | ------------------------------------------------------------------------------------------- |
@@ -152,7 +195,3 @@ npm run version:v1
 ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST 'cd /var/api/test.codebrew.cc && git reset --hard origin/main && cd v1 && npm i && npm run build && pm2 restart test.codebrew.cc/v1 --update-env || pm2 start dist/main.js --name v1'
 fi
 ```
-
----
-
-Happy coding! ✨
