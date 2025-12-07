@@ -9,7 +9,7 @@ This mono repository provides a fully automated pipeline to detect changes, buil
 
 ---
 
-## Repository Structure 📂
+### Repository Structure 📂
 
 ```
 .
@@ -18,6 +18,16 @@ This mono repository provides a fully automated pipeline to detect changes, buil
 ├── package.json  # Root dependencies
 └── .circleci/
     └── config.yml # CI/CD pipeline
+```
+
+### CI/CD Flow 🌊
+
+```
+detect-changes 🔍
+       ↓
+build-and-test 🏗️
+       ↓
+release-and-build 🚀
 ```
 
 ---
@@ -50,18 +60,6 @@ chore: update dependencies
 ```
 
 > ⚠️ Commits that do not follow this convention will be rejected, helping maintain a clean history and enabling automated versioning in CircleCI.
-
----
-
-### CI/CD Flow 🌊
-
-```
-detect-changes 🔍
-       ↓
-build-and-test 🏗️
-       ↓
-release-and-build 🚀
-```
 
 ---
 
