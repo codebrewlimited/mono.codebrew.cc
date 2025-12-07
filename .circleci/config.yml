@@ -38,7 +38,8 @@ jobs:
             fi
 
             # Exclude any file named CHANGELOG.md but always include package.json
-            CHANGED_FILES=$(git diff --name-only $BASE_BRANCH...HEAD | grep -v "CHANGELOG.md" || echo "")
+            CHANGED_FILES=$(git diff --name-only $BASE_BRANCH...HEAD | grep -v -E "CHANGELOG.md|package.json" || echo "")
+
             if git diff --name-only $BASE_BRANCH...HEAD | grep -q "package.json"; then
               CHANGED_FILES="$CHANGED_FILES"$'\n'"package.json"
             fi
