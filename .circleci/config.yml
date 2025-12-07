@@ -37,8 +37,12 @@ jobs:
               echo "Feature branch detected. Comparing against $BASE_BRANCH"
             fi
 
-            # Exclude ANY file named CHANGELOG.md
+            # Exclude any file named CHANGELOG.md but always include package.json
             CHANGED_FILES=$(git diff --name-only $BASE_BRANCH...HEAD | grep -v "CHANGELOG.md" || echo "")
+            if git diff --name-only $BASE_BRANCH...HEAD | grep -q "package.json"; then
+              CHANGED_FILES="$CHANGED_FILES"$'\n'"package.json"
+            fi
+
             echo "Changed files (filtered):"
             echo "$CHANGED_FILES"
 
