@@ -62,6 +62,59 @@ jobs:
           paths:
             - workspace-vars
 
+  build-and-test:
+    executor: node-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Load workspace vars
+          command: |
+            if [ -f workspace-vars ]; then
+              source workspace-vars
+            fi
+            echo "V1_CHANGED=$V1_CHANGED"
+            echo "V2_CHANGED=$V2_CHANGED"
+
+      - run:
+          name: Skip if no app changed
+          command: |
+            source workspace-vars
+            if [ "$V1_CHANGED" = "false" ] && [ "$V2_CHANGED" = "false" ]; then
+              echo "No app changes detected — skipping build and tests. 💤"
+              exit 0
+            fi
+
+      - run:
+          name: Install root dependencies
+          command: npm ci
+
+      - run:
+          name: Build test targets
+          command: |
+            source workspace-vars
+            if [ "$V1_CHANGED" = "false" ]; then
+              echo "🏗️ Building v1"
+              cd v1
+              npm ci
+              npm run build
+              cd ..
+            fi
+
+            if [ "$V2_CHANGED" = "true" ]; then
+              echo "🏗️ Building v2"
+              cd v2
+              npm ci
+              npm run build
+              cd ..
+            fi
+
+      - run:
+          name: Run tests
+          command: npm test --workspaces
+
   release-and-build:
     executor: node-executor
     steps:
