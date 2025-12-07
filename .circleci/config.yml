@@ -264,9 +264,17 @@ workflows:
   build-and-release:
     jobs:
       - detect-changes
-      - release-and-build:
+
+      - build-and-test:
           requires:
             - detect-changes
+          filters:
+            branches:
+              only: main
+
+      - release-and-build:
+          requires:
+            - build-and-test
           filters:
             branches:
               only: main
