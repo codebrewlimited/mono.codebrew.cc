@@ -118,7 +118,17 @@ jobs:
 
       - run:
           name: Run tests
-          command: npm test --workspaces
+          command: |
+            source workspace-vars
+            if [ "$V1_CHANGED" = "true" ]; then
+              echo "🧪 Testing v1 API"
+              npm test -w v1 --if-present
+            fi
+
+            if [ "$CLIENT_CHANGED" = "true" ]; then
+              echo "🧪 Testing Client App"
+              npm test -w client --if-present
+            fi
 
   release-and-build:
     executor: node-executor
