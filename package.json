@@ -1,6 +1,6 @@
 {
     "name": "mono.codebrew.cc",
-    "description": "Mono project: v1 & v2 workspaces with CircleCI and Docker integration for streamlined development",
+    "description": "Monorepo containing v1 (API) and client workspaces with CircleCI automation and AWS-integrated deployments (no Docker).",
     "private": true,
     "workspaces": [
         "v1",
