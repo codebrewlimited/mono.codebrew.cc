@@ -6,49 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Client App</title>
 
-    <!-- Tailwind CDN for quick setup -->
+    <!-- Tailwind CDN for quick styling -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-50 text-gray-900 font-sans flex flex-col min-h-screen">
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen">
 
-    <!-- Header -->
-    <header class="bg-blue-600 text-white p-4 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold">Client App</h1>
-            <a href="https://github.com/codebrewlimited/mono.codebrew.cc?tab=readme-ov-file" target="_blank"
-                class="underline hover:text-gray-200">
-                Mono Repo 📦
-            </a>
-        </div>
-    </header>
+    <!-- Main app mount point -->
+    <div id="root" class="p-6"></div>
 
-    <!-- Main Content -->
-    <main class="flex-1 container mx-auto p-8 flex flex-col justify-center items-center">
-        <h2 class="text-3xl font-semibold mb-4 text-center">Welcome to the Client App</h2>
-        <p class="text-lg text-center mb-6 max-w-xl">
-            This is a minimal frontend scaffold. Your React/Vue/Svelte app will mount below.
-            Edit <code>src/main.js</code> to start developing your client application.
-        </p>
-
-        <!-- App Mount -->
-        <div id="root"
-            class="w-full max-w-2xl border-2 border-dashed border-gray-300 rounded-lg p-6 bg-white shadow-md">
-            <p class="text-center text-gray-400">Your app will render here!</p>
-        </div>
-
-        <!-- Button to repo -->
-        <a href="https://github.com/codebrewlimited/mono.codebrew.cc?tab=readme-ov-file" target="_blank"
-            class="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-500 transition">
-            View Mono Repo
-        </a>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-200 text-gray-700 p-4 text-center">
-        &copy; 2025 Codebrew Limited. All rights reserved.
-    </footer>
-
+    <!-- Load main.js -->
     <script type="module" src="/src/main.js"></script>
 </body>
 
