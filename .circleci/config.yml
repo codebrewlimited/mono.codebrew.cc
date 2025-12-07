@@ -5,8 +5,7 @@ orbs:
 
 executors:
   node-executor:
-    machine:
-      image: ubuntu-2204:2023.09
+    machine: true
     working_directory: ~/repo
 
 jobs:
