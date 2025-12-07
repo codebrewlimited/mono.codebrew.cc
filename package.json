@@ -4,11 +4,11 @@
     "private": true,
     "workspaces": [
         "v1",
-        "v2"
+        "client"
     ],
     "scripts": {
         "version:v1": "cd v1 && npx standard-version --no-verify --message \"chore(release): %s [skip ci]\" && cd ..",
-        "version:v2": "cd v2 && npx standard-version && cd ..",
+        "version:client": "cd client && npx standard-version --no-verify --message \"chore(release): %s [skip ci]\" && cd ..",
         "preversion": "echo 'Preversion hook running...'",
         "postversion": "git push --follow-tags"
     },

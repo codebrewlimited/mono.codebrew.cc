@@ -53,10 +53,10 @@ jobs:
               echo "V1_CHANGED=false" >> workspace-vars
             fi
 
-            if echo "$CHANGED_FILES" | grep -qE "^v2/"; then
-              echo "V2_CHANGED=true" >> workspace-vars
+            if echo "$CHANGED_FILES" | grep -qE "^client/"; then
+              echo "CLIENT_CHANGED=true" >> workspace-vars
             else
-              echo "V2_CHANGED=false" >> workspace-vars
+              echo "CLIENT_CHANGED=false" >> workspace-vars
             fi
 
             echo "workspace-vars created:"
@@ -81,13 +81,13 @@ jobs:
               source workspace-vars
             fi
             echo "V1_CHANGED=$V1_CHANGED"
-            echo "V2_CHANGED=$V2_CHANGED"
+            echo "CLIENT_CHANGED=$CLIENT_CHANGED"
 
       - run:
           name: Skip if no app changed
           command: |
             source workspace-vars
-            if [ "$V1_CHANGED" = "false" ] && [ "$V2_CHANGED" = "false" ]; then
+            if [ "$V1_CHANGED" = "false" ] && [ "$CLIENT_CHANGED" = "false" ]; then
               echo "No app changes detected — skipping build and tests. 💤"
               exit 0
             fi
@@ -108,9 +108,9 @@ jobs:
               cd ..
             fi
 
-            if [ "$V2_CHANGED" = "true" ]; then
-              echo "🏗️ Building v2"
-              cd v2
+            if [ "$CLIENT_CHANGED" = "true" ]; then
+              echo "🏗️ Building client app"
+              cd client
               npm ci
               npm run build
               cd ..
@@ -134,7 +134,7 @@ jobs:
               source workspace-vars
             fi
             echo "V1_CHANGED=$V1_CHANGED"
-            echo "V2_CHANGED=$V2_CHANGED"
+            echo "CLIENT_CHANGED=$CLIENT_CHANGED"
 
       - run:
           name: Install root dependencies
@@ -151,9 +151,9 @@ jobs:
               echo "📦 Running release for v1"
               npm run version:v1
             fi
-            if [ "$V2_CHANGED" = "true" ]; then
-              echo "📦 Running release for v2"
-              npm run version:v2
+            if [ "$CLIENT_CHANGED" = "true" ]; then
+              echo "📦 Running release for client app"
+              npm run version:client
             fi
 
       - run:
