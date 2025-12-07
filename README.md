@@ -5,7 +5,7 @@ This repository contains a mono project with two workspaces:
 - **v1** – A barebone TypeScript API for demo purposes 🏭
 - **client** (formerly v2) – Future frontend or client workspace 💻
 
-This mono repository provides a fully automated pipeline to detect changes, build, test, release, and deploy TypeScript and client applications with **CircleCI** for CI/CD integration, **AWS** ☁️ for secure SSH-based deployments, and strict commit conventions.
+This mono repository provides a fully automated pipeline to detect changes, build, test, release, and deploy TypeScript and client applications with **CircleCI** for CI/CD integration, **AWS** ☁️ for secure SSH-based deployments, and strict commit conventions. It also features **automated versioning** 📦 that increments versions based on which subfolder (`v1` or `client`) has been updated.
 
 ---
 
